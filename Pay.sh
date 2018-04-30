@@ -34,7 +34,7 @@ days=0
 today=0
 today_month=0
 
-months_money=10000
+months_money=16000
 days_money=310
 real_days_money=0
 
@@ -62,12 +62,12 @@ if [[ $today_month -eq 1 || $today_month -eq 3 || $today_month -eq 5\
                          || $today_month -eq 7 || $today_month -eq 8\
                          || $today_month -eq 10 || $today_month -eq 12 ]]
 	then
-		days=$((31-today))
+		days=$((31-10#$today))
 elif [[ $today_month -eq 2 ]]
 	then
-		days=$((28-today))
+		days=$((28-10#$today))
 else
-		days=$((30-today))
+		days=$((30-10#$today))
 fi
 
 #Сount the number of strings in file
@@ -125,7 +125,7 @@ do
 		if [[ string -gt max ]]
 			then
 				pay_date_of_max=${pay_date:0:2}
-				pay_date_of_max=$((pay_date_of_max-1))
+				pay_date_of_max=$((10#$pay_date_of_max-1))
 				pay_date_of_max="${pay_date_of_max}${pay_date:2}"
 				max=$((string))
 		fi
@@ -486,6 +486,10 @@ else
 fi
 
 #Warnings
+if [[ days -eq 0 ]]
+	then
+		days=1
+fi
 real_days_money=$(((months_money-sum)/days))
 if [[ real_days_money -ge $days_money ]]
 	then
