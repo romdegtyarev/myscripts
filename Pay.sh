@@ -34,7 +34,7 @@ days=0
 today=0
 today_month=0
 
-months_money=16000
+months_money=24600
 days_money=310
 real_days_money=0
 
@@ -58,6 +58,8 @@ fi
 #Сount the number of days before the end of the month
 today=$(date \+"%d")
 today_month=$(date \+"%m")
+#echo "Month $today_month"
+#echo "Today $today"
 if [[ $today_month -eq 1 || $today_month -eq 3 || $today_month -eq 5\
                          || $today_month -eq 7 || $today_month -eq 8\
                          || $today_month -eq 10 || $today_month -eq 12 ]]
@@ -152,7 +154,7 @@ if [[ $string == '***Сумма:' ]]
 		echo "***Sum: $sum***"
 		echo "***Max cost pay: $pay_date_of_max - $max"
 		#Products                   PR
-		echo -e "Products                   $PR\t$((PR*100/sum)) % \t\c"
+		echo -e "Products                   $PR\t\t$((PR*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((PR*100/sum)) -le 25 ]]
 			then
@@ -170,7 +172,7 @@ if [[ $string == '***Сумма:' ]]
 		done
 		echo -e "]${NORMAL}"
 		#Eating in the dining room  DPR
-		echo -e "Eating in the dining room  $DPR\t$((DPR*100/sum)) % \t\c"
+		echo -e "Eating in the dining room  $DPR\t\t$((DPR*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((DPR*100/sum)) -le 25 ]]
 			then
@@ -188,7 +190,7 @@ if [[ $string == '***Сумма:' ]]
 		done
 		echo -e "]${NORMAL}"
 		#A restaurant               RPR
-		echo -e "A restaurant               $RPR\t$((RPR*100/sum)) % \t\c"
+		echo -e "A restaurant               $RPR\t\t$((RPR*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((RPR*100/sum)) -le 25 ]]
 			then
@@ -206,7 +208,7 @@ if [[ $string == '***Сумма:' ]]
 		done
 		echo -e "]${NORMAL}"
 		#Household chemicals        Chem
-		echo -e "Household chemicals        $Chem\t$((Chem*100/sum)) % \t\c"
+		echo -e "Household chemicals        $Chem\t\t$((Chem*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((Chem*100/sum)) -le 25 ]]
 			then
@@ -224,7 +226,7 @@ if [[ $string == '***Сумма:' ]]
 		done
 		echo -e "]${NORMAL}"
 		#Payments                   PM
-		echo -e "Payments                   $PM\t$((PM*100/sum)) % \t\c"
+		echo -e "Payments                   $PM\t\t$((PM*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((PM*100/sum)) -le 25 ]]
 			then
@@ -242,7 +244,7 @@ if [[ $string == '***Сумма:' ]]
 		done
 		echo -e "]${NORMAL}"
 		#Clothing                   CL
-		echo -e "Clothing                   $CL\t$((CL*100/sum)) % \t\c"
+		echo -e "Clothing                   $CL\t\t$((CL*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((CL*100/sum)) -le 25 ]]
 			then
@@ -260,7 +262,7 @@ if [[ $string == '***Сумма:' ]]
 		done
 		echo -e "]${NORMAL}"
 		#Entertainment              ENT
-		echo -e "Entertainment              $ENT\t$((ENT*100/sum)) % \t\c"
+		echo -e "Entertainment              $ENT\t\t$((ENT*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((ENT*100/sum)) -le 25 ]]
 			then
@@ -278,7 +280,7 @@ if [[ $string == '***Сумма:' ]]
 		done
 		echo -e "]${NORMAL}"
 		#For home                   HM
-		echo -e "For home                   $HM\t$((HM*100/sum)) % \t\c"
+		echo -e "For home                   $HM\t\t$((HM*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((HM*100/sum)) -le 25 ]]
 			then
@@ -296,7 +298,7 @@ if [[ $string == '***Сумма:' ]]
 		done
 		echo -e "]${NORMAL}"
 		#Health                     HLS
-		echo -e "Health                     $HLS\t$((HLS*100/sum)) % \t\c"
+		echo -e "Health                     $HLS\t\t$((HLS*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((HLS*100/sum)) -le 25 ]]
 			then
@@ -320,7 +322,7 @@ else
 		echo "***Sum: $sum***"
 		echo "***Max cost pay: $pay_date_of_max - $max"
 		#Products                   PR
-		echo -e "Products                   $PR\t$((PR*100/sum)) % \t\c"
+		echo -e "Products                   $PR\t\t$((PR*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((PR*100/sum)) -le 25 ]]
 			then
@@ -338,7 +340,7 @@ else
 		done
 		echo -e "]${NORMAL}"
 		#Eating in the dining room  DPR
-		echo -e "Eating in the dining room  $DPR\t$((DPR*100/sum)) % \t\c"
+		echo -e "Eating in the dining room  $DPR\t\t$((DPR*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((DPR*100/sum)) -le 25 ]]
 			then
@@ -356,7 +358,7 @@ else
 		done
 		echo -e "]${NORMAL}"
 		#A restaurant               RPR
-		echo -e "A restaurant               $RPR\t$((RPR*100/sum)) % \t\c"
+		echo -e "A restaurant               $RPR\t\t$((RPR*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((RPR*100/sum)) -le 25 ]]
 			then
@@ -374,7 +376,7 @@ else
 		done
 		echo -e "]${NORMAL}"
 		#Household chemicals        Chem
-		echo -e "Household chemicals        $Chem\t$((Chem*100/sum)) % \t\c"
+		echo -e "Household chemicals        $Chem\t\t$((Chem*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((Chem*100/sum)) -le 25 ]]
 			then
@@ -392,7 +394,7 @@ else
 		done
 		echo -e "]${NORMAL}"
 		#Payments                   PM
-		echo -e "Payments                   $PM\t$((PM*100/sum)) % \t\c"
+		echo -e "Payments                   $PM\t\t$((PM*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((PM*100/sum)) -le 25 ]]
 			then
@@ -410,7 +412,7 @@ else
 		done
 		echo -e "]${NORMAL}"
 		#Clothing                   CL
-		echo -e "Clothing                   $CL\t$((CL*100/sum)) % \t\c"
+		echo -e "Clothing                   $CL\t\t$((CL*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((CL*100/sum)) -le 25 ]]
 			then
@@ -428,7 +430,7 @@ else
 		done
 		echo -e "]${NORMAL}"
 		#Entertainment              ENT
-		echo -e "Entertainment              $ENT\t$((ENT*100/sum)) % \t\c"
+		echo -e "Entertainment              $ENT\t\t$((ENT*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((ENT*100/sum)) -le 25 ]]
 			then
@@ -446,7 +448,7 @@ else
 		done
 		echo -e "]${NORMAL}"
 		#For home                   HM
-		echo -e "For home                   $HM\t$((HM*100/sum)) % \t\c"
+		echo -e "For home                   $HM\t\t$((HM*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((HM*100/sum)) -le 25 ]]
 			then
@@ -464,7 +466,7 @@ else
 		done
 		echo -e "]${NORMAL}"
 		#Health                     HLS
-		echo -e "Health                     $HLS\t$((HLS*100/sum)) % \t\c"
+		echo -e "Health                     $HLS\t\t$((HLS*100/sum)) % \t\t\c"
 		process=0
 		if [[ $((HLS*100/sum)) -le 25 ]]
 			then
@@ -491,6 +493,7 @@ if [[ days -eq 0 ]]
 		days=1
 fi
 real_days_money=$(((months_money-sum)/days))
+echo "$real_days_money"
 if [[ real_days_money -ge $days_money ]]
 	then
 		echo -e "${GREEN}***Still good =)*** ${NORMAL}"
