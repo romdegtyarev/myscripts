@@ -79,7 +79,7 @@ async def handle_pdf(message: types.Message):
 
     document = message.document
     user_dir = f"/tmp/{user_id}"
-    file_path = os.path.join(user_dir, document.file_name)
+    file_path = os.path.join(user_dir, f"{user_id}.pdf")
 
     try:
         os.makedirs(user_dir, exist_ok=True)
