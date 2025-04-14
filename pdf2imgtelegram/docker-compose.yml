@@ -15,7 +15,7 @@ services:
     env_file:
       - .envdb
     ports:
-      - "5432:5432"
+      - "5462:5462"
     volumes:
       - postgresdata:/var/lib/postgresql/data
 

@@ -78,9 +78,11 @@ async def handle_pdf(message: types.Message):
         return
 
     document = message.document
-    file_path = f"/tmp/{user_id}/{document.file_name}"
+    user_dir = f"/tmp/{user_id}"
+    file_path = os.path.join(user_dir, document.file_name)
 
     try:
+        os.makedirs(user_dir, exist_ok=True)
         await bot.download(document, destination=file_path)
         user_temp_files[user_id] = file_path
         logger.info(f"handle_pdf: Download file: {file_path} from user: {user_id}")
