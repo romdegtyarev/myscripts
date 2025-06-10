@@ -1,15 +1,8 @@
-version: '3.8'
-services:
-  bot:
-    build: .
-    container_name: pdf2imgtelegrambot
-    env_file:
-      - .envbot
-    depends_on:
-      - db
+version: "3.9"
 
+services:
   db:
-    image: postgres:15
+    image: postgres:16-alpine
     container_name: pdf2imgtelegramdb
     restart: always
     env_file:
@@ -18,6 +11,16 @@ services:
       - "5462:5462"
     volumes:
       - postgresdata:/var/lib/postgresql/data
+
+  bot:
+    build: .
+    image: pdf2imgtelegram:latest
+    container_name: pdf2imgtelegrambot
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .envbot
 
 volumes:
   postgresdata:
