@@ -15,6 +15,13 @@ class Piece:
     name: str
     cells: Shape
 
+@dataclass
+class Stats:
+    calls: int = 0
+    attempts: int = 0
+    backtracks: int = 0
+    dead_ends: int = 0
+
 
 MONTHS = {
     1: "ЯНВ",
@@ -139,9 +146,17 @@ def placements_for_target(target: Coord, free: set[Coord], pieces: tuple[Piece, 
     return options
 
 
-def solve(free: set[Coord],    pieces: tuple[Piece, ...], placed: dict[str, set[Coord]] | None = None,) -> dict[str, set[Coord]] | None:
+def solve(
+    free: set[Coord],
+    pieces: tuple[Piece, ...],
+    placed: dict[str, set[Coord]] | None = None,
+    stats: Stats | None = None,
+) -> dict[str, set[Coord]] | None:
     if placed is None:
         placed = {}
+
+    if stats is not None:
+        stats.calls += 1
 
     if not pieces:
         return placed if not free else None
@@ -152,6 +167,8 @@ def solve(free: set[Coord],    pieces: tuple[Piece, ...], placed: dict[str, set[
         options = placements_for_target(target, free, pieces)
 
         if not options:
+            if stats is not None:
+                stats.dead_ends += 1
             return None
 
         if best_options is None or len(options) < len(best_options):
@@ -161,15 +178,26 @@ def solve(free: set[Coord],    pieces: tuple[Piece, ...], placed: dict[str, set[
         return None
 
     for piece_index, piece, cells in best_options:
+        if stats is not None:
+            stats.attempts += 1
+
         rest = pieces[:piece_index] + pieces[piece_index + 1:]
 
         new_placed = dict(placed)
         new_placed[piece.name] = cells
 
-        result = solve(free=free - cells, pieces=rest, placed=new_placed,)
+        result = solve(
+            free=free - cells,
+            pieces=rest,
+            placed=new_placed,
+            stats=stats,
+        )
 
         if result is not None:
             return result
+
+        if stats is not None:
+            stats.backtracks += 1
 
     return None
 
@@ -310,11 +338,18 @@ def main() -> None:
     print(f"Открытые клетки: {labels[0]}, {labels[1]}, {labels[2]}")
 
 
-    solution = solve(free, PIECES)
+    stats = Stats()
+    solution = solve(free, PIECES, stats=stats)
     if solution is None:
         print("Решение не найдено")
         return
     print_board(solution, hidden)
+    print()
+    print("Статистика поиска:")
+    print(f"Вызовов solve(): {stats.calls}")
+    print(f"Попыток поставить фигуру: {stats.attempts}")
+    print(f"Откатов: {stats.backtracks}")
+    print(f"Тупиков: {stats.dead_ends}")
 
 
 if __name__ == "__main__":
