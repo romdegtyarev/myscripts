@@ -5,6 +5,9 @@ import argparse
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Iterator
+import requests
+from bs4 import BeautifulSoup
+import re
 
 
 Coord = tuple[int, int]
@@ -146,9 +149,66 @@ def placements_for_target(target: Coord, free: set[Coord], pieces: tuple[Piece, 
     return options
 
 
+def is_valid_solution(
+    solution: dict[str, set[Coord]],
+    hidden: set[Coord],
+) -> bool:
+    """
+    Check physical constraints of the finished solution.
+
+    The yellow straight piece may be placed horizontally without
+    additional restrictions.
+
+    If it is vertical, the cell directly below it must provide
+    support. An exposed calendar cell below the piece means that
+    the piece would fall down.
+    """
+
+    yellow = solution.get("🟨")
+
+    if yellow is None:
+        return True
+
+    rows = {r for r, _ in yellow}
+    cols = {c for _, c in yellow}
+
+    # Horizontal orientation:
+    #
+    # 🟨🟨🟨🟨
+    #
+    # No additional check is required.
+    if len(rows) == 1:
+        return True
+
+    # Vertical orientation:
+    #
+    # 🟨
+    # 🟨
+    # 🟨
+    # 🟨
+    #
+    if len(cols) == 1:
+        bottom_r = max(r for r, _ in yellow)
+        col = next(iter(cols))
+
+        below = (bottom_r + 1, col)
+
+        # The piece reaches the physical edge of the board.
+        if below not in BOARDLABELS:
+            return True
+
+        # There is an exposed calendar cell directly below.
+        # The piece would fall into it.
+        if below in hidden:
+            return False
+
+    return True
+
+
 def solve(
     free: set[Coord],
     pieces: tuple[Piece, ...],
+    hidden: set[Coord],
     placed: dict[str, set[Coord]] | None = None,
     stats: Stats | None = None,
 ) -> dict[str, set[Coord]] | None:
@@ -159,7 +219,16 @@ def solve(
         stats.calls += 1
 
     if not pieces:
-        return placed if not free else None
+        if free:
+            return None
+
+        if not is_valid_solution(placed, hidden):
+            if stats is not None:
+                stats.dead_ends += 1
+
+            return None
+
+        return placed
 
     best_options: list[tuple[int, Piece, set[Coord]]] | None = None
 
@@ -189,6 +258,7 @@ def solve(
         result = solve(
             free=free - cells,
             pieces=rest,
+            hidden=hidden,
             placed=new_placed,
             stats=stats,
         )
@@ -315,6 +385,87 @@ def parse_date(value: str) -> date:
         raise argparse.ArgumentTypeError("Дата должна быть существующей датой в формате YYYY-MM-DD") from e
 
 
+
+
+def print_wikipedia_on_this_day(target_date: date) -> None:
+    template_name = (
+        f"Шаблон:События дня/"
+        f"{target_date.month:02d}-{target_date.day:02d}"
+    )
+
+    try:
+        response = requests.get(
+            "https://ru.wikipedia.org/w/api.php",
+            params={
+                "action": "parse",
+                "page": template_name,
+                "prop": "text",
+                "format": "json",
+            },
+            timeout=10,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (X11; Linux x86_64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/136.0.0.0 Safari/537.36"
+                ),
+            },
+        )
+
+        response.raise_for_status()
+        data = response.json()
+
+    except (
+        requests.RequestException,
+        ValueError,
+    ) as e:
+        print()
+        print(f"Не удалось получить данные Википедии: {e}")
+        return
+
+    if "error" in data:
+        print()
+        print(
+            "Википедия вернула ошибку: "
+            f"{data['error'].get('info', 'unknown error')}"
+        )
+        return
+
+    html = data.get("parse", {}).get("text", {}).get("*")
+
+    if not html:
+        print()
+        print("События не найдены")
+        return
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    events: list[str] = []
+
+    for item in soup.find_all("li"):
+        text = " ".join(
+            item.get_text(" ", strip=True).split()
+        )
+
+        if re.match(r"^\d{3,4}\s*[—–-]", text):
+            events.append(text)
+
+    print()
+    print("В этот день:")
+    print()
+    print(
+        target_date.strftime("%d.%m.%Y")
+    )
+    print()
+
+    if not events:
+        print("События не найдены")
+        return
+
+    for event in events:
+        print(f"• {event}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Решатель календарной головоломки",
@@ -339,7 +490,7 @@ def main() -> None:
 
 
     stats = Stats()
-    solution = solve(free, PIECES, stats=stats)
+    solution = solve(free=free, pieces=PIECES, hidden=hidden, stats=stats)
     if solution is None:
         print("Решение не найдено")
         return
@@ -350,6 +501,7 @@ def main() -> None:
     print(f"Попыток поставить фигуру: {stats.attempts}")
     print(f"Откатов: {stats.backtracks}")
     print(f"Тупиков: {stats.dead_ends}")
+    print_wikipedia_on_this_day(target_date)
 
 
 if __name__ == "__main__":
